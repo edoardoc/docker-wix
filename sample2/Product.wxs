@@ -16,7 +16,7 @@
 
 
    <!-- Full version number to display -->
-   <?define VersionNumber="!(bind.FileVersion.uberAgentExe)" ?>
+   <?define VersionNumber="!(bind.FileVersion.rportClientExe)" ?>
 
    <!--
    Upgrade code HAS to be the same for all updates.
@@ -25,19 +25,18 @@
    <?define UpgradeCode="181410DA-06A6-413A-A1C7-261B894D4999" ?> <!-- YOUR-GUID-HERE -->
 
    <!-- The URL for add/remove programs -->
-   <?define InfoURL="https://helgeklein.com/" ?>
+   <?define InfoURL="https://rport.com/" ?>
 
    <!-- 32-bit / 64-bit variables -->
-   <?if $(var.Platform) = x64 ?>
+   <!-- <?if $(var.Platform) = x64 ?> -->
       <?define Win64 = "yes" ?>
       <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
-      <?define uberAgentExeSourcePath = "$(var.ProjectDir)\rport.exe" ?>
-   <?else ?>
-      <?define Win64 = "no" ?>
-      <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
-      <?define uberAgentExeSourcePath = "$(var.ProjectDir)\rport32.exe" ?>
-   <?endif ?>
-
+      <?define rportClientExeSourcePath = "$(var.ProjectDir)\rport.exe" ?>
+   <!-- <?else ?> -->
+      <!-- <?define Win64 = "no" ?> -->
+      <!-- <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?> -->
+      <!-- <?define rportClientExeSourcePath = "$(var.ProjectDir)\rport32.exe" ?> -->
+   <!-- <?endif ?> -->
    <!--
       ====================================================================================
       Package start
@@ -195,18 +194,18 @@
                   </Component>
                   
                   <!-- Main program file -->
-                  <Component Id="uberAgent.exe_comp" Guid="*" Win64="$(var.Win64)">
+                  <Component Id="rportClient.exe_comp" Guid="*" Win64="$(var.Win64)">
                      
-                     <File Source="$(var.uberAgentExeSourcePath)" Id="uberAgentExe" KeyPath="yes" />
+                     <File Source="$(var.rportClientExeSourcePath)" Id="rportClientExe" KeyPath="yes" />
 
-                     <ServiceInstall Id="ServiceInstaller" Account="LocalSystem" Description="!(loc.ServiceDescription)" DisplayName="!(loc.ServiceDisplayName)" ErrorControl="normal"
-                                     LoadOrderGroup="NetworkProvider" Name="uberAgentSvc" Start="auto" Type="ownProcess" Vital="yes" />
-                     <ServiceControl Id="ServiceControl" Name="uberAgentSvc" Start="install" Stop="both" Remove="uninstall" />
+                     <ServiceInstall Id="ServiceInstaller" Account="LocalSystem" Description="!(loc.ServiceDescription)" DisplayName="!(loc.ServiceDisplayName)" 
+					 				 ErrorControl="normal" Arguments=" /start MyService" LoadOrderGroup="NetworkProvider" Name="rportClientSvc" Start="auto" Type="ownProcess" Vital="yes" />
+                     <ServiceControl Id="ServiceControl" Name="rportClientSvc" Start="install" Stop="both" Remove="uninstall" Wait="yes" />
                      
                   </Component>
 
                   <!-- Configuration file -->
-                  <Component Id="uberAgent.conf_comp" Guid="181410DA-06A6-413A-A1C7-261B894D4000"> <!-- NOPE! ANOTHER YOUR-GUID-HERE -->
+                  <Component Id="rportClient.conf_comp" Guid="181410DA-06A6-413A-A1C7-261B894D4000"> <!-- NOPE! ANOTHER YOUR-GUID-HERE -->
 
                      <File Source="$(var.ProjectDir)\rport.example.conf" Id="RPortConf" KeyPath="yes" />
 
@@ -241,8 +240,8 @@
          <!-- A feature block for the main (GUI) program and all its dependencies -->
          <Feature Id="MainProgram" Title="!(loc.FeatureMainProgramTitle)" Description="!(loc.FeatureMainProgramDescription)" Level="1">
             <ComponentRef Id="INSTALLDIR_comp" />
-            <ComponentRef Id="uberAgent.exe_comp" />
-            <ComponentRef Id="uberAgent.conf_comp" />
+            <ComponentRef Id="rportClient.exe_comp" />
+            <ComponentRef Id="rportClient.conf_comp" />
 
             <!-- Registry entries -->
             <ComponentRef Id="RegValInstallLocation_comp" />
